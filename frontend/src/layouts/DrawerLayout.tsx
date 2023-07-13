@@ -38,6 +38,8 @@ interface Props {
   selectedCollection: CollectionModelSchema | undefined;
   showNewCollectionModal: boolean;
   setSelectedCollection: (arg0: CollectionModelSchema) => void | undefined;
+  showInsertCollectionModal: boolean;
+  setShowInsertCollectionModal: React.Dispatch<React.SetStateAction<boolean>>;
   onAddNewCollection: () => void | undefined;
   setAuthToken: (key: string) => void | undefined;
   authToken: string;
@@ -49,6 +51,8 @@ export default function DrawerLayout2(props: Props) {
     selectedCollection,
     showNewCollectionModal,
     setSelectedCollection,
+    showInsertCollectionModal,
+    setShowInsertCollectionModal,
     onAddNewCollection,
     setAuthToken,
     authToken,
@@ -82,7 +86,7 @@ export default function DrawerLayout2(props: Props) {
 
   useEffect(() => {
     fetchCollections();
-  }, [showNewCollectionModal]);
+  }, [showNewCollectionModal, showInsertCollectionModal]);
 
   useEffect(() => {
     fetchCollections();
@@ -230,6 +234,7 @@ export default function DrawerLayout2(props: Props) {
           </IconButton>
           {selectedCollection ? (
             <CollectionInfoPopover
+              setShowInsertCollectionModal={setShowInsertCollectionModal}
               collection={selectedCollection}
               canDownload={authToken !== ""}
               canDelete={authToken !== ""}

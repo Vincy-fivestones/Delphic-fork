@@ -11,10 +11,12 @@ import {
   Divider,
   Box,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import FilePresentIcon from "@mui/icons-material/FilePresent";
 import { CollectionModelSchema } from "../types";
+import { useState } from "react";
 
 const bull = <span style={{ paddingLeft: 5 }}>&bull;</span>;
 
@@ -22,10 +24,12 @@ export const CollectionCard = ({
   canDownload,
   canDelete,
   collection,
+  setShowInsertCollectionModal,
 }: {
   canDelete: boolean;
   canDownload: boolean;
   collection: CollectionModelSchema;
+  setShowInsertCollectionModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   return (
     <Card sx={{ minWidth: 275 }}>
@@ -94,6 +98,20 @@ export const CollectionCard = ({
           onClick={() => window.alert("Collection Delete Not Implemented Yet")}
         >
           <DeleteIcon /> Delete
+        </IconButton>
+
+        <IconButton
+          size="small"
+          edge="end"
+          color="primary"
+          onClick={() => {
+            setShowInsertCollectionModal(true);
+          }}
+
+          // disabled={!canDelete}
+          // onClick={() => window.alert("Collection Delete Not Implemented Yet")}
+        >
+          <AddIcon /> Add Documents
         </IconButton>
       </CardActions>
     </Card>

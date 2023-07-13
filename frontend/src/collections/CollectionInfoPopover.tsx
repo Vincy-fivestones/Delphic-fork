@@ -10,10 +10,12 @@ export const CollectionInfoPopover = ({
   canDownload,
   canDelete,
   collection,
+  setShowInsertCollectionModal,
 }: {
   canDelete: boolean;
   canDownload: boolean;
   collection: CollectionModelSchema;
+  setShowInsertCollectionModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
@@ -53,6 +55,7 @@ export const CollectionInfoPopover = ({
         }}
       >
         <CollectionCard
+          setShowInsertCollectionModal={setShowInsertCollectionModal}
           collection={collection}
           canDownload={canDownload}
           canDelete={canDelete}

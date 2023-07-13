@@ -71,12 +71,17 @@ export const getMyCollections = async (
  */
 export const addFileToCollection = async (
   collectionId: number,
-  file: File,
+  files: FileList | null,
   authToken: string
 ): Promise<any> => {
   const formData = new FormData();
-  formData.append("file", file);
-  formData.append("description", "A test file");
+  formData.append("description", "Insert file to collection");
+  if (files) {
+    for (let i = 0; i < files.length; i++) {
+      formData.append("files", files[i]);
+    }
+  }
+  // formData.append("file", file);
 
   try {
     const response: AxiosResponse<any> = await axios.post(

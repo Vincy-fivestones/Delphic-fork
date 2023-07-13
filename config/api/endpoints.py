@@ -91,7 +91,6 @@ async def create_collection(
         # Fetch document names directly
     )
 
-
 @collections_router.post(
     "/query",
     response=CollectionQueryOutput,
@@ -141,15 +140,21 @@ async def get_my_collections_view(request: HttpRequest):
 async def add_file_to_collection(
     request,
     collection_id: int,
-    file: UploadedFile = File(...),
+    files: list[UploadedFile] = File(...),
     description: str = Form(...),
 ):
     collection = await sync_to_async(Collection.objects.get)(id=collection_id)
 
-    doc_data = file.read()
-    doc_file = ContentFile(doc_data, file.name)
+    for uploaded_file in files:
+        doc_data = uploaded_file.file.read()
+        doc_file = ContentFile(doc_data, uploaded_file.name)
+        document = Document(collection=collection, file=doc_file, description=uploaded_file.name)
+        await sync_to_async(document.save)()
 
-    document = Document(collection=collection, file=doc_file, description=description)
-    await sync_to_async(document.save)()
+    # doc_data = file.read()
+    # doc_file = ContentFile(doc_data, file.name)
 
-    return {"message": f"Added file {file.name} to collection {collection_id}"}
+    # document = Document(collection=collection, file=doc_file, description=description)
+    # await sync_to_async(document.save)()
+
+    return {"message": f"Added {len(files)} file(s) to collection {collection_id}"}
