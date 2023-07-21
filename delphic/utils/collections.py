@@ -4,7 +4,13 @@ import textwrap
 from pathlib import Path
 
 from django.conf import settings
-from llama_index import StorageContext, load_index_from_storage
+from langchain import OpenAI
+from llama_index import (
+    LLMPredictor,
+    ServiceContext,
+    StorageContext,
+    load_index_from_storage,
+)
 from llama_index.indices.base import BaseIndex
 
 from delphic.indexes.models import Collection
@@ -64,9 +70,18 @@ async def load_collection_model(collection_id: str | int) -> "BaseIndex":
 
         # Call VectorStoreIndex.load_from_disk
         logger.info("load_collection_model() - Load llama index")
+
+        llm_predictor = LLMPredictor(
+            llm=OpenAI(temperature=0, model_name="gpt-3.5-turbo", max_tokens=512)
+        )
+        service_context = ServiceContext.from_defaults(llm_predictor=llm_predictor)
+        print("service_context", service_context)
+
         with cache_file_path.open("r") as cache_file:
             storage_context = StorageContext.from_dict(json.load(cache_file))
-        index = load_index_from_storage(storage_context)
+        index = load_index_from_storage(
+            service_context=service_context, storage_context=storage_context
+        )
 
         logger.info(
             "load_collection_model() - Llamaindex loaded and ready for query..."
@@ -100,9 +115,11 @@ async def query_collection(collection_id: str | int, query_str: str) -> str:
     try:
         # Load the index from the collection
         index = await load_collection_model(collection_id)
-
+        print(index)
         # Call index.query and return the response
         response = index.query(query_str)
+
+        print("response ", response)
 
         # Format the response as markdown
         markdown_response = f"## Response\n\n{response}\n\n"
